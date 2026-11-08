@@ -1,0 +1,224 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: hu-home-01\rf01-ep-03-elementos-de-navegacion-visibles.spec.ts >> RF01-EP-03 · Elementos de navegación visibles >> RF01-TC-03 · Elementos de navegación visibles
+- Location: tests\hu-home-01\rf01-ep-03-elementos-de-navegacion-visibles.spec.ts:8:3
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: locator('[data-test="product-name"]').first()
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" locator('[data-test="product-name"]').first() with timeout 5000ms
+  - waiting for locator('[data-test="product-name"]').first()
+
+```
+
+```yaml
+- text: View the
+- link "Documentation":
+  - /url: https://testsmith-io.github.io/practice-software-testing/#/
+- text: for this application. Practice Black Box Testing & Bug Hunting
+- button "Testing Guide"
+- navigation:
+  - link "Practice Software Testing - Toolshop":
+    - /url: /
+    - img
+  - menubar "Main menu":
+    - menuitem "Home":
+      - link "Home":
+        - /url: /
+    - menuitem "Categories":
+      - button "Categories"
+    - menuitem "Contact":
+      - link "Contact":
+        - /url: /contact
+    - menuitem "Sign in":
+      - link "Sign in":
+        - /url: /auth/login
+  - button "Select language": EN
+- paragraph:
+  - img "Banner"
+- separator
+- heading "Sort" [level=4]
+- separator
+- combobox "sort":
+  - option [selected]
+  - option "Name (A - Z)"
+  - option "Name (Z - A)"
+  - option "Price (High - Low)"
+  - option "Price (Low - High)"
+  - option "CO₂ Rating (A - E)"
+  - option "CO₂ Rating (E - A)"
+- heading "Price Range" [level=4]
+- separator
+- slider "ngx-slider"
+- slider "ngx-slider-max"
+- text: 0 200 1 100
+- heading "Search" [level=4]
+- separator
+- text: Search
+- textbox "Search"
+- button "X"
+- button "Search"
+- heading "Filters" [level=4]
+- separator
+- heading "By category:" [level=4]
+- group "Categories":
+  - text: Categories
+  - checkbox "Hand Tools"
+  - text: Hand Tools
+  - list:
+    - group "Categories":
+      - text: Categories
+      - checkbox "Hammer"
+      - text: Hammer
+      - checkbox "Hand Saw"
+      - text: Hand Saw
+      - checkbox "Wrench"
+      - text: Wrench
+      - checkbox "Screwdriver"
+      - text: Screwdriver
+      - checkbox "Pliers"
+      - text: Pliers
+      - checkbox "Chisels"
+      - text: Chisels
+      - checkbox "Measures"
+      - text: Measures
+  - checkbox "Power Tools"
+  - text: Power Tools
+  - list:
+    - group "Categories":
+      - text: Categories
+      - checkbox "Grinder"
+      - text: Grinder
+      - checkbox "Sander"
+      - text: Sander
+      - checkbox "Saw"
+      - text: Saw
+      - checkbox "Drill"
+      - text: Drill
+  - checkbox "Other"
+  - text: Other
+  - list:
+    - group "Categories":
+      - text: Categories
+      - checkbox "Tool Belts"
+      - text: Tool Belts
+      - checkbox "Storage Solutions"
+      - text: Storage Solutions
+      - checkbox "Workbench"
+      - text: Workbench
+      - checkbox "Safety Gear"
+      - text: Safety Gear
+      - checkbox "Fasteners"
+      - text: Fasteners
+- heading "By brand:" [level=4]
+- group "Brands":
+  - text: Brands
+  - checkbox "ForgeFlex Tools"
+  - text: ForgeFlex Tools
+  - checkbox "MightyCraft Hardware"
+  - text: MightyCraft Hardware
+- heading "Sustainability:" [level=4]
+- group "Eco-Friendly Products":
+  - text: Eco-Friendly Products
+  - checkbox "Show only eco-friendly products"
+  - text: Show only eco-friendly products
+- heading [level=5]
+- heading [level=5]
+- heading [level=5]
+- heading [level=5]
+- heading [level=5]
+- heading [level=5]
+- heading [level=5]
+- heading [level=5]
+- contentinfo:
+  - text: This is a DEMO application (
+  - link "GitHub repo":
+    - /url: https://github.com/testsmith-io/practice-software-testing
+  - text: ), used for software testing training purpose. |
+  - link "Privacy Policy":
+    - /url: /privacy
+  - text: "| Banner photo by"
+  - link "Barn Images":
+    - /url: https://unsplash.com/@barnimages
+  - text: "on"
+  - link "Unsplash":
+    - /url: https://unsplash.com/photos/t5YUoHW6zRo
+  - text: . v6.0.0 | Built 2026-07-05 | Angular 20.0.5
+- button "Open chat":
+  - img
+- button "Show live shop activity"
+```
+
+# Test source
+
+```ts
+  1  | import { expect, type Page } from '@playwright/test';
+  2  | 
+  3  | export const API_URL = 'http://localhost:8091';
+  4  | 
+  5  | interface Product {
+  6  |   id: string | number;
+  7  |   name: string;
+  8  |   price: number;
+  9  |   product_image?: {
+  10 |     file_name: string;
+  11 |   } | null;
+  12 | }
+  13 | 
+  14 | interface ProductList {
+  15 |   data: Product[];
+  16 | }
+  17 | 
+  18 | export async function productosDeApi(page: Page): Promise<ProductList> {
+  19 |   const response = await page.request.fetch(`${API_URL}/products`, {
+  20 |     method: 'QUERY',
+  21 |     data: { page: '1' },
+  22 |   });
+  23 | 
+  24 |   if (!response.ok()) {
+  25 |     throw new Error(`Could not load products from the API: ${response.status()} ${response.statusText()}`);
+  26 |   }
+  27 | 
+  28 |   return response.json() as Promise<ProductList>;
+  29 | }
+  30 | 
+  31 | export async function irAlCatalogo(page: Page): Promise<void> {
+  32 |   await page.goto('/');
+> 33 |   await expect(page.locator('[data-test="product-name"]').first()).toBeVisible();
+     |                                                                    ^ Error: expect(locator).toBeVisible() failed
+  34 | }
+  35 | 
+  36 | export async function nombresVisibles(page: Page): Promise<string[]> {
+  37 |   const names = await page.locator('[data-test="product-name"]').allTextContents();
+  38 |   return names.map((name) => name.trim());
+  39 | }
+  40 | 
+  41 | export async function sinErroresTecnicos(page: Page): Promise<void> {
+  42 |   await expect(page.locator('body')).not.toContainText(/server error|exception|stack trace|sqlstate/i);
+  43 | }
+  44 | 
+  45 | export async function simularFallaDelServicio(page: Page): Promise<void> {
+  46 |   await page.route(`${API_URL}/products**`, (route) =>
+  47 |     route.fulfill({
+  48 |       status: 503,
+  49 |       contentType: 'application/json',
+  50 |       body: JSON.stringify({ message: 'Service unavailable' }),
+  51 |     }),
+  52 |   );
+  53 | }
+  54 | 
+```
